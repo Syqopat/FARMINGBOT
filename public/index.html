@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CactusFarm Bot - Dashboard</title>
+  <meta name="description" content="Minecraft Cactus Farm Bot - Web Dashboard">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header id="header">
+    <div class="header-left">
+      <div class="logo">
+        <span class="logo-icon">🌵</span>
+        <span class="logo-text">CactusFarm</span>
+        <span class="logo-badge">BOT</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-indicator" id="statusIndicator">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText">0 Bot Aktif</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main id="main">
+
+    <!-- ===== SOL PANEL: Bot Ekleme + Bot Listesi ===== -->
+    <section class="panel panel-bots" id="botsPanel">
+      <div class="panel-header">
+        <h2>İstemciler</h2>
+        <span class="panel-icon" id="botCountBadge">0</span>
+      </div>
+      <div class="panel-body">
+
+        <!-- Bot Ekleme Formu -->
+        <div class="bot-add-form">
+          <div class="input-group">
+            <label for="inputHost">Sunucu IP</label>
+            <input type="text" id="inputHost" placeholder="localhost" value="localhost">
+          </div>
+          <div class="input-row">
+            <div class="input-group">
+              <label for="inputPort">Port</label>
+              <input type="number" id="inputPort" placeholder="25565" value="25565">
+            </div>
+            <div class="input-group">
+              <label for="inputVersion">Versiyon</label>
+              <select id="inputVersion">
+                <option value="">Otomatik Algıla</option>
+                <option value="1.21.1">1.21.1</option>
+                <option value="1.20.4">1.20.4</option>
+                <option value="1.20.1">1.20.1</option>
+                <option value="1.19.4">1.19.4</option>
+                <option value="1.18.2">1.18.2</option>
+                <option value="1.16.5">1.16.5</option>
+                <option value="1.12.2">1.12.2</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="input-group">
+              <label for="inputBaseName">İstemci Adı</label>
+              <input type="text" id="inputBaseName" placeholder="afk" value="Bot">
+            </div>
+            <div class="input-group">
+              <label for="inputBotCount">Sayı</label>
+              <input type="number" id="inputBotCount" placeholder="1" value="1" min="1" max="20">
+            </div>
+          </div>
+
+          <!-- Önizleme -->
+          <div class="name-preview" id="namePreview">
+            <span class="name-preview-label">Oluşturulacak:</span>
+            <span class="name-preview-names" id="namePreviewList">Bot</span>
+          </div>
+
+          <button class="btn btn-primary btn-full" id="btnAddBots" onclick="addBots()">
+            <span class="btn-icon">＋</span> Ekle
+          </button>
+        </div>
+
+        <!-- Bot Listesi -->
+        <div class="bot-list-header">
+          <span>Aktif İstemciler</span>
+          <button class="btn btn-sm btn-danger" onclick="removeAllBots()" id="btnRemoveAll">Hepsini Sil</button>
+        </div>
+        <div class="bot-list" id="botList">
+          <div class="bot-list-empty">Henüz istemci eklenmedi.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== ORTA PANEL: Seçili Bot Detayı ===== -->
+    <section class="panel panel-detail" id="detailPanel">
+      <div class="panel-header">
+        <h2 id="detailTitle">Bot Detayı</h2>
+        <span class="panel-icon">📊</span>
+      </div>
+      <div class="panel-body" id="detailBody">
+
+        <!-- Boş durum -->
+        <div class="detail-empty" id="detailEmpty">
+          <div class="detail-empty-icon">🤖</div>
+          <p>Sol panelden bir istemci seçin veya yeni istemci ekleyin.</p>
+        </div>
+
+        <!-- Seçili bot bilgisi (gizli başlangıçta) -->
+        <div class="detail-content" id="detailContent" style="display:none;">
+
+          <!-- Bot üst bar: isim + durum + kontroller -->
+          <div class="bot-detail-header">
+            <div class="bot-detail-info">
+              <h3 class="bot-detail-name" id="detailBotName">Bot</h3>
+              <span class="bot-detail-status-badge" id="detailStatusBadge">offline</span>
+              <span class="bot-detail-server" id="detailServer">localhost:25565</span>
+            </div>
+            <div class="bot-detail-actions" id="detailActions">
+              <!-- Dynamically filled -->
+            </div>
+          </div>
+
+          <!-- Reconnect bar (gösterilir sadece disconnect durumda) -->
+          <div class="bot-reconnect-bar" id="reconnectBar" style="display:none;">
+            <input type="text" id="inputReconnectIp" placeholder="IP:Port (ör: mc.sunucu.com:25565)">
+            <button class="btn btn-sm btn-primary" onclick="reconnectBot()">
+              <span class="btn-icon">▶</span> Bağlan
+            </button>
+          </div>
+
+          <!-- Bot bilgi kartları -->
+          <div class="stat-cards">
+            <div class="stat-card">
+              <span class="stat-label">Pozisyon</span>
+              <span class="stat-value" id="statPos">- , - , -</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Sağlık</span>
+              <div class="stat-bar-wrap">
+                <div class="stat-bar stat-bar-health" id="statHealthBar" style="width: 0%"></div>
+              </div>
+              <span class="stat-value-sm" id="statHealth">0/20</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Açlık</span>
+              <div class="stat-bar-wrap">
+                <div class="stat-bar stat-bar-food" id="statFoodBar" style="width: 0%"></div>
+              </div>
+              <span class="stat-value-sm" id="statFood">0/20</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SAĞ PANEL: Kontroller ===== -->
+    <section class="panel panel-controls" id="controlsPanel">
+      <div class="panel-header">
+        <h2>Kontroller</h2>
+        <span class="panel-icon">🎮</span>
+      </div>
+      <div class="panel-body">
+
+        <!-- Hedef seçimi -->
+        <div class="control-section">
+          <div class="target-switch">
+            <button class="btn btn-sm target-btn active" id="btnTargetSelected" onclick="setTarget('selected')">Seçili Bot</button>
+            <button class="btn btn-sm target-btn" id="btnTargetAll" onclick="setTarget('all')">Tüm Botlar</button>
+          </div>
+        </div>
+
+        <!-- Oyuncu Takip -->
+        <div class="control-section">
+          <h3>Oyuncu Takip</h3>
+          <div class="input-group">
+            <label for="inputFollowPlayer">Oyuncu Adı</label>
+            <input type="text" id="inputFollowPlayer" placeholder="Oyuncu adını girin">
+          </div>
+          <div class="input-group">
+            <label for="inputFollowDist">Takip Mesafesi</label>
+            <input type="number" id="inputFollowDist" placeholder="3" value="3" min="1" max="20">
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="btnFollow" onclick="followPlayer()">
+              <span class="btn-icon">🏃</span> Takip Et
+            </button>
+            <button class="btn btn-secondary" id="btnStopFollow" onclick="stopFollow()">
+              <span class="btn-icon">✋</span> Dur
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat -->
+        <div class="control-section">
+          <h3>Chat</h3>
+          <div class="chat-input-wrap">
+            <input type="text" id="inputChat" placeholder="Mesaj gönder..." onkeydown="if(event.key==='Enter')sendChat()">
+            <button class="btn btn-sm btn-primary" onclick="sendChat()">Gönder</button>
+          </div>
+        </div>
+
+        <!-- Kaktüs Farm -->
+        <div class="control-section">
+          <h3>🌵 Kaktüs Farm</h3>
+          <div class="farm-list" id="farmList">
+            <div class="farm-list-empty">Henüz farm eklenmedi.</div>
+          </div>
+          <button class="btn btn-primary btn-full" id="btnNewFarm" onclick="openFarmModal()">
+            <span class="btn-icon">＋</span> Yeni Farm Oluştur
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== FARM MODAL ========== -->
+  <div class="modal-overlay" id="farmModalOverlay" style="display:none;">
+    <div class="modal-content" id="farmModalContent">
+      <div class="modal-header">
+        <h2 id="farmModalTitle">Yeni Farm Oluştur</h2>
+        <button class="modal-close" onclick="closeFarmModal()">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Farm Adı -->
+        <div class="input-group">
+          <label for="farmName">Farm Adı</label>
+          <input type="text" id="farmName" placeholder="Farm adı girin...">
+        </div>
+
+        <!-- Başlangıç Koordinatları -->
+        <div class="input-group">
+          <label for="farmStart">Başlangıç Noktası (X Y Z)</label>
+          <input type="text" id="farmStart" placeholder="Örn: 100 64 -200">
+        </div>
+
+        <!-- Bitiş Koordinatları -->
+        <div class="input-group">
+          <label for="farmEnd">Bitiş Noktası (X Y Z)</label>
+          <input type="text" id="farmEnd" placeholder="Örn: 150 64 -150">
+        </div>
+
+        <!-- Merdiven Noktası -->
+        <div class="input-group">
+          <label for="farmStair">🪜 Merdiven Başlangıç Noktası (X Y Z)</label>
+          <input type="text" id="farmStair" placeholder="Örn: 100 64 -200">
+        </div>
+
+        <!-- Kat Sayısı -->
+        <div class="input-group">
+          <label for="farmFloors">Kat Sayısı</label>
+          <input type="number" id="farmFloors" placeholder="1" value="1" min="1" max="50">
+        </div>
+
+        <!-- Chest Koordinatları -->
+        <div class="chest-section">
+          <label class="section-title">📦 Chest Koordinatları</label>
+
+          <div class="input-group">
+            <label for="chestNetherrack">🧱 Netherrack Chest (X Y Z)</label>
+            <input type="text" id="chestNetherrack" placeholder="0 64 0">
+          </div>
+
+          <div class="input-group">
+            <label for="chestSand">🏖️ Kum Chest (X Y Z)</label>
+            <input type="text" id="chestSand" placeholder="0 64 0">
+          </div>
+
+          <div class="input-group">
+            <label for="chestCactus">🌵 Kaktüs Chest (X Y Z)</label>
+            <input type="text" id="chestCactus" placeholder="0 64 0">
+          </div>
+
+          <div class="input-group">
+            <label for="chestTrash">🗑️ Çöp Sandığı (X Y Z) <span style="color:var(--text-muted);font-size:0.7rem;">(Opsiyonel)</span></label>
+            <input type="text" id="chestTrash" placeholder="Her kata başlarken gereksiz eşyaları bırakır">
+          </div>
+        </div>
+
+        <!-- Katman Seçimi -->
+        <div class="layer-section">
+          <label class="section-title">📋 Katman Seçimi</label>
+          <div class="layer-checkboxes">
+            <label class="layer-checkbox" id="layerNetherrackWrap">
+              <input type="checkbox" id="layerNetherrack" checked onchange="updateLayerDeps()">
+              <span class="layer-check-mark"></span>
+              <span>🧱 Netherrack</span>
+            </label>
+            <label class="layer-checkbox" id="layerSandWrap">
+              <input type="checkbox" id="layerSand" checked onchange="updateLayerDeps()">
+              <span class="layer-check-mark"></span>
+              <span>🏖️ Kum</span>
+            </label>
+            <label class="layer-checkbox" id="layerCactusWrap">
+              <input type="checkbox" id="layerCactus" checked onchange="updateLayerDeps()">
+              <span class="layer-check-mark"></span>
+              <span>🌵 Kaktüs</span>
+            </label>
+          </div>
+          <div class="layer-dep-info" id="layerDepInfo"></div>
+        </div>
+
+        <!-- Gecikme -->
+        <div class="input-group">
+          <label for="farmDelay">Blok Arası Gecikme (ms)</label>
+          <input type="number" id="farmDelay" placeholder="500" value="500" min="100" max="5000">
+        </div>
+
+        <!-- Katman Sonu Komutu -->
+        <div class="input-group">
+          <label for="layerCommand">Katman Sonu Komutu (Opsiyonel)</label>
+          <input type="text" id="layerCommand" placeholder="Örn: /sellall">
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeFarmModal()">İptal</button>
+        <button class="btn btn-primary" onclick="saveFarm()">
+          <span class="btn-icon">💾</span> Kaydet
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== LOG KONSOLU ========== -->
+  <section class="panel panel-log" id="logPanel">
+    <div class="panel-header">
+      <h2>Konsol</h2>
+      <div class="log-actions">
+        <span class="log-count" id="logCount">0 satır</span>
+        <button class="btn btn-sm" onclick="clearLogs()">Temizle</button>
+      </div>
+    </div>
+    <div class="log-body" id="logBody">
+      <div class="log-empty">Henüz log yok. İstemci ekleyerek başlayın.</div>
+    </div>
+  </section>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+{
+  "farms": {
+    "farm1": {
+      "name": "farm1",
+      "startPos": {
+        "x": -58,
+        "y": 91,
+        "z": 56
+      },
+      "endPos": {
+        "x": -80,
+        "y": 91,
+        "z": 80
+      },
+      "stairPos": {
+        "x": -57,
+        "y": 91,
+        "z": 65
+      },
+      "floors": 3,
+      "delay": 100,
+      "chests": {
+        "netherrack": {
+          "x": -40,
+          "y": 91,
+          "z": 47
+        },
+        "sand": {
+          "x": -41,
+          "y": 91,
+          "z": 47
+        },
+        "cactus": {
+          "x": -39,
+          "y": 91,
+          "z": 47
+        }
+      },
+      "layers": {
+        "netherrack": true,
+        "sand": true,
+        "cactus": true
+      },
+      "progress": {
+        "status": "building",
+        "currentFloor": 0,
+        "currentLayer": "sand",
+        "currentBlockIndex": 0,
+        "totalBlocksPlaced": 575
+      }
+    },
+    "farm2": {
+      "name": "farm2",
+      "startPos": {
+        "x": -58,
+        "y": 91,
+        "z": 68
+      },
+      "endPos": {
+        "x": -64,
+        "y": 91,
+        "z": 62
+      },
+      "stairPos": {
+        "x": -57,
+        "y": 91,
+        "z": 65
+      },
+      "floors": 5,
+      "delay": 50,
+      "layerCommand": "/msg Syqopat bitti",
+      "chests": {
+        "netherrack": {
+          "x": -40,
+          "y": 91,
+          "z": 47
+        },
+        "sand": {
+          "x": -41,
+          "y": 91,
+          "z": 47
+        },
+        "cactus": {
+          "x": -39,
+          "y": 91,
+          "z": 47
+        }
+      },
+      "layers": {
+        "netherrack": true,
+        "sand": true,
+        "cactus": true
+      },
+      "progress": {
+        "status": "completed",
+        "currentFloor": 4,
+        "currentLayer": "cactus",
+        "currentBlockIndex": 0,
+        "totalBlocksPlaced": 110
+      }
+    }
+  }
+}

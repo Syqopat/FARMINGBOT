@@ -1,0 +1,23 @@
+{
+  "name": "cactusfarm-bot",
+  "version": "1.0.0",
+  "description": "Minecraft Cactus Farm Bot with Web Dashboard",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["minecraft", "mineflayer", "bot", "cactus-farm"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "mineflayer": "^4.37.1",
+    "mineflayer-pathfinder": "^2.4.5",
+    "minecraft-data": "^3.69.0",
+    "socket.io": "^4.8.3",
+    "vec3": "^0.1.10"
+  }
+}
