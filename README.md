@@ -1,41 +1,41 @@
 # 🚜 FARMINGBOT (Minecraft Bot Manager & Web Dashboard)
 
-![Status](https://img.shields.io/badge/Durum-Geli%C5%9Ftirilmeye%20A%C3%A7%C4%B1k%20%2F%20WIP-yellow?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Work%20in%20Progress%20%2F%20WIP-yellow?style=for-the-badge)
 ![Node](https://img.shields.io/badge/Node.js-18%2B-green?style=for-the-badge)
 ![Mineflayer](https://img.shields.io/badge/Mineflayer-Bot-blue?style=for-the-badge)
 ![CI](https://img.shields.io/badge/CI%2FCD-Active-success?style=for-the-badge)
 
-**FARMINGBOT**, Mineflayer kütüphanesi kullanarak Minecraft sunucularında otomatik tarım (kaktüs vb.) yapan bot ordusunu web paneli üzerinden yönetmeye yarayan tam yığın (full-stack) uygulamadır.
+**FARMINGBOT** is a full-stack automation dashboard built with Mineflayer, Express, and Socket.io for managing Minecraft farming bots.
 
 ---
 
-## 📌 Proje Durumu (Project Status)
+## 📌 Project Status
 
-- **Durum:** 🟡 **Geliştirilmeye Açık / WIP (Work in Progress)**
-- **Test & CI/CD:** GitHub Actions otomasyonu eklendi.
-- **Konfigürasyon:** `config.json` ile port ve bot yönetimi özelleştirilebilir.
-
----
-
-## 🚀 Özellikler
-
-- **Web Dashboard:** Express & Socket.io tabanlı bot takip ve kontrol paneli.
-- **Bot Yöneticisi (`bot-manager.js`):** Birden fazla botun sunucuya bağlanmasını ve görev dağılımını yönetir.
-- **Kaktüs Çiftliği Modülü:** Otomatik kaktüs toplama ve depolama mekanizması.
+- **Status:** 🟡 **Work in Progress (WIP)**
+- **CI/CD:** Automated GitHub Actions build workflow enabled.
+- **Configuration:** Managed via `config.json`.
 
 ---
 
-## 🛠️ Kurulum ve Çalıştırma
+## 🚀 Key Features
+
+- **Web Dashboard:** Express & Socket.io web interface to monitor bot states.
+- **Bot Manager (`bot-manager.js`):** Multi-bot connection handling and task distribution.
+- **Cactus Farm Module:** Automated harvesting and storage logic.
+
+---
+
+## 🛠️ Installation & Execution
 
 ```bash
 npm install
 npm start
 ```
 
-Web arayüzüne `http://localhost:3000` adresinden ulaşabilirsiniz.
+Access the dashboard at `http://localhost:3000`.
 
 ---
 
-## 📄 Lisans
+## 📄 License
 
-MIT License
+Licensed under the MIT License.
