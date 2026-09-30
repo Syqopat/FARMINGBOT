@@ -1,4 +1,4 @@
-const mineflayer = require("mineflayer");
+﻿const mineflayer = require("mineflayer");
 const { pathfinder, Movements, goals } = require("mineflayer-pathfinder");
 const { GoalFollow, GoalNear } = goals;
 const CactusFarm = require("./cactus-farm");

@@ -1,4 +1,4 @@
-import subprocess
+﻿import subprocess
 import socket
 import sys
 import threading
@@ -25,10 +25,10 @@ def print_output(process, prefix):
 
 
 def check_npm_deps(base_dir):
-    """node_modules yoksa npm install çalıştır"""
+    """node_modules yoksa npm install Ã§alÄ±ÅŸtÄ±r"""
     node_modules = os.path.join(base_dir, "node_modules")
     if not os.path.isdir(node_modules):
-        print("[SYSTEM] node_modules bulunamadı, bağımlılıklar yükleniyor...")
+        print("[SYSTEM] node_modules bulunamadÄ±, baÄŸÄ±mlÄ±lÄ±klar yÃ¼kleniyor...")
         result = subprocess.run(
             "npm install",
             cwd=base_dir,
@@ -37,9 +37,9 @@ def check_npm_deps(base_dir):
             text=True,
         )
         if result.returncode != 0:
-            print(f"[HATA] npm install başarısız:\n{result.stderr}")
+            print(f"[HATA] npm install baÅŸarÄ±sÄ±z:\n{result.stderr}")
             sys.exit(1)
-        print("[SYSTEM] Bağımlılıklar yüklendi!")
+        print("[SYSTEM] BaÄŸÄ±mlÄ±lÄ±klar yÃ¼klendi!")
 
 
 def main():
@@ -47,21 +47,19 @@ def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
 
     print()
-    print("╔═══════════════════════════════════════════════════════╗")
-    print("║           🌵 CactusFarm Bot - Başlatılıyor           ║")
-    print("╠═══════════════════════════════════════════════════════╣")
-    print(f"║  Yerel IP (LAN):    {local_ip:<34}║")
-    print(f"║  Dashboard (Local): http://localhost:3001             ║")
-    print(f"║  Dashboard (LAN):   http://{local_ip}:3001{' ' * (21 - len(local_ip))}║")
-    print("╠═══════════════════════════════════════════════════════╣")
-    print("║  Durdurmak için: Ctrl+C                              ║")
-    print("╚═══════════════════════════════════════════════════════╝")
+    print("â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—")
+    print("â•‘           ğŸŒµ CactusFarm Bot - BaÅŸlatÄ±lÄ±yor           â•‘")
+    print("â• â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•£")
+    print(f"â•‘  Yerel IP (LAN):    {local_ip:<34}â•‘")
+    print(f"â•‘  Dashboard (Local): http://localhost:3001             â•‘")
+    print(f"â•‘  Dashboard (LAN):   http://{local_ip}:3001{' ' * (21 - len(local_ip))}â•‘")
+    print("â• â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•£")
+    print("â•‘  Durdurmak iÃ§in: Ctrl+C                              â•‘")
+    print("â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•")
     print()
 
-    # Bağımlılıkları kontrol et
     check_npm_deps(base_dir)
 
-    # Backend sunucusunu başlat
     server_process = subprocess.Popen(
         "node server.js",
         cwd=base_dir,
@@ -71,19 +69,17 @@ def main():
         shell=True,
     )
 
-    # Output thread
     output_thread = threading.Thread(
         target=print_output, args=(server_process, "SERVER")
     )
     output_thread.daemon = True
     output_thread.start()
 
-    # 2 saniye bekleyip tarayıcıyı aç
     time.sleep(2)
     webbrowser.open("http://localhost:3001")
 
     def signal_handler(sig, frame):
-        print("\n[SYSTEM] Sunucu kapatılıyor...")
+        print("\n[SYSTEM] Sunucu kapatÄ±lÄ±yor...")
         if os.name == "nt":
             subprocess.call(
                 ["taskkill", "/F", "/T", "/PID", str(server_process.pid)],

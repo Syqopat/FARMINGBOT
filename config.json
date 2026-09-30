@@ -1,0 +1,5 @@
+{
+  "port": 3000,
+  "bot_reconnect_interval_ms": 5000,
+  "max_bots": 10
+}

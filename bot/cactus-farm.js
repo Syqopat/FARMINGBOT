@@ -1,4 +1,4 @@
-const Vec3 = require("vec3").Vec3;
+﻿const Vec3 = require("vec3").Vec3;
 const { Movements, goals } = require("mineflayer-pathfinder");
 const { GoalNear, GoalBlock } = goals;
 
@@ -416,7 +416,6 @@ class CactusFarm {
     }
   }
 
-  // ===== MODIFIED: buildLayer — self-placement kontrol, retry fix, dama deseni navigasyonu =====
   async buildLayer(positions, blockType, floorIndex, layerName) {
     const progress = this.config.progress || {};
     let startIndex = 0;
@@ -435,7 +434,6 @@ class CactusFarm {
         throw new Error("BUILD_STOPPED");
       }
 
-      // Zaten yerlestirilmis bloklari atla
       while (i < positions.length) {
         let existing = this.bot.blockAt(positions[i]);
         if (existing && existing.name !== "air" && existing.name !== "void_air" && existing.name !== "cave_air") {
@@ -454,7 +452,6 @@ class CactusFarm {
 
       await this.checkAndRefill(blockType, neededCount, floorIndex);
 
-      // Hedef pozisyona git
       if (isSandOrCactus) {
           await this.navigateToAdjacent(targetPos, floorY);
       } else {
@@ -473,7 +470,6 @@ class CactusFarm {
            continue;
         }
 
-        // FIX: Bot hedef pozisyonda mi? Oyleyse once cekil
         if (this.isBotStandingAt(currentPos)) {
             await this.moveAwayFrom(currentPos, floorIndex);
         }
@@ -490,7 +486,6 @@ class CactusFarm {
                     await this.sleep(100);
                     continue;
                 }
-                // FIX: Dogrudan sorunlu bloga git (chunk merkezine degil)
                 if (isSandOrCactus) {
                     await this.navigateToAdjacent(currentPos, floorY);
                 } else {
@@ -523,7 +518,6 @@ class CactusFarm {
                     await this.sleep(100);
                     continue;
                 }
-                // FIX: Dogrudan sorunlu bloga git
                 if (isSandOrCactus) {
                     await this.navigateToAdjacent(currentPos, floorY);
                 } else {
@@ -543,7 +537,6 @@ class CactusFarm {
       }
     }
 
-    // === VERIFICATION PASS ===
     this.manager.log(`   ${layerName.toUpperCase()} kontrol (Verification) ediliyor...`);
     let missing = [];
     for (let pos of positions) {
@@ -560,7 +553,6 @@ class CactusFarm {
 
             await this.checkAndRefill(blockType, missing.length, floorIndex);
 
-            // FIX: Bot hedef pozisyonda mi?
             if (this.isBotStandingAt(pos)) {
                 await this.moveAwayFrom(pos, floorIndex);
             }
@@ -595,7 +587,6 @@ class CactusFarm {
         await this.sleep(1000);
     }
 
-    // FIX: hasFrame false olarak cagir (frame katmani yok)
     this.saveProgress(floorIndex, this.getNextLayerName(layerName, false) || layerName, 0);
   }
 
@@ -665,7 +656,6 @@ class CactusFarm {
           await this.navigateBasic(blockPos, 3, false);
           const equipped = await this.equipBlock("netherrack");
           if (!equipped) throw new Error(`Netherrack yok.`);
-          // FIX: blockType parametresi eklendi
           await this.placeBlock(blockPos, "netherrack");
           this.totalBlocksPlaced++;
         } catch (err) {
@@ -707,7 +697,6 @@ class CactusFarm {
       .reduce((sum, item) => sum + item.count, 0);
   }
 
-  // ===== MODIFIED: checkAndRefill — refill sonrasi merdivenle kata don =====
   async checkAndRefill(blockType, neededCount = 64 * 35, floorIndex = null) {
     const count = this.countInventoryItem(blockType);
     if (count >= Math.min(neededCount, this.refillThreshold)) return;
@@ -721,7 +710,6 @@ class CactusFarm {
       await this.refillFromChest(blockType, targetAmount);
     }
 
-    // Refill sonrasi bot katindan ayrildiysa merdivenle don
     if (floorIndex !== null) {
       const floorY = this.getFloorBaseY(floorIndex);
       const botYAfter = this.bot.entity.position.y;
@@ -820,7 +808,6 @@ class CactusFarm {
     } catch (err) {}
   }
 
-  // ===== MODIFIED: setupPathfinder — avoidSand parametresi eklendi =====
   setupPathfinder(avoidCactus = false, avoidSand = false) {
     const mcData = require("minecraft-data")(this.bot.version);
     const movements = new Movements(this.bot, mcData);
@@ -836,7 +823,6 @@ class CactusFarm {
     this.bot.pathfinder.setMovements(movements);
   }
 
-  // ===== MODIFIED: waitForGoal — listener leak fix =====
   waitForGoal(timeoutMs = 6000) {
     return new Promise((resolve) => {
       let resolved = false;
@@ -867,7 +853,6 @@ class CactusFarm {
     });
   }
 
-  // ===== MODIFIED: navigatePrecise — avoidSand destegi =====
   async navigatePrecise(pos, avoidSand = false) {
       const botPos = this.bot.entity.position;
       if (botPos.distanceTo(pos) <= 0.8) return;
@@ -892,7 +877,6 @@ class CactusFarm {
       }
   }
 
-  // ===== MODIFIED: breakCactusInWay — envanterdeki gercek item aranir =====
   async breakCactusInWay(targetPos) {
       const botPos = this.bot.entity.position;
       if (botPos.distanceTo(targetPos) > 8) return;
@@ -916,7 +900,6 @@ class CactusFarm {
       }
   }
 
-  // ===== MODIFIED: navigateBasic — avoidSand destegi =====
   async navigateBasic(pos, range = 2, avoidCactus = true, avoidSand = false) {
     const botPos = this.bot.entity.position;
     if (botPos.distanceTo(pos) <= range) return;
@@ -932,9 +915,7 @@ class CactusFarm {
     }
   }
 
-  // ===== MODIFIED: tossExcessItem — merdiven noktasina gidip at =====
   async tossExcessItem(blockType, keepAmount) {
-    // Merdiven noktasina git (farm disi, bir daha gitmeyecek)
     const stairPos = this.config.stairPos;
     const tossPos = new Vec3(stairPos.x, this.baseY + 1, stairPos.z);
     await this.navigateBasic(tossPos, 2, false);
@@ -954,10 +935,6 @@ class CactusFarm {
     }
   }
 
-  // ===== MODIFIED: navigateToAdjacent — dama deseni navigasyonu =====
-  // Bot her zaman bos karelere (x+z)%2!==0 konumlanir
-  // Kumun ustune cikmak yerine netherrack zemininde yurur
-  // Farm sinirlari disina cikmaz
   async navigateToAdjacent(targetPos, floorY) {
       const dirs = [
           new Vec3(1, 0, 0), new Vec3(-1, 0, 0),
@@ -971,22 +948,17 @@ class CactusFarm {
           const adjX = targetPos.x + d.x;
           const adjZ = targetPos.z + d.z;
 
-          // Farm sinirlari kontrolu (1 blok tolerans)
           if (adjX < this.minX - 1 || adjX > this.maxX + 1 ||
               adjZ < this.minZ - 1 || adjZ > this.maxZ + 1) continue;
 
-          // Dama deseninde bos kare mi? (sand/cactus: (x+z)%2===0, bos: (x+z)%2!==0)
           const isEmptySquare = (adjX + adjZ) % 2 !== 0;
 
-          // Kaktus kontrolu — kaktus olan yere gitme
           const cactusBlock = this.bot.blockAt(new Vec3(adjX, floorY + 2, adjZ));
           if (cactusBlock && cactusBlock.name === "cactus") continue;
 
-          // Sand kontrolu
           const sandBlock = this.bot.blockAt(new Vec3(adjX, floorY + 1, adjZ));
           const hasSand = sandBlock && sandBlock.name !== "air" && sandBlock.name !== "void_air" && sandBlock.name !== "cave_air";
 
-          // Zemin kontrolu (netherrack var mi?)
           const groundBlock = this.bot.blockAt(new Vec3(adjX, floorY, adjZ));
           const hasGround = groundBlock && groundBlock.name !== "air" && groundBlock.name !== "void_air" && groundBlock.name !== "cave_air";
 
@@ -1010,7 +982,6 @@ class CactusFarm {
           });
       }
 
-      // Sirala: bos kareler once, netherrack ustunde olanlar once, yakin olanlar once
       candidates.sort((a, b) => {
           if (a.isEmptySquare && !b.isEmptySquare) return -1;
           if (!a.isEmptySquare && b.isEmptySquare) return 1;
@@ -1022,7 +993,6 @@ class CactusFarm {
       if (candidates.length > 0) {
           await this.navigatePrecise(candidates[0].pos, true);
       } else {
-          // Fallback: hedefin yanina git
           for (const d of dirs) {
               const fbPos = new Vec3(targetPos.x + d.x, floorY + 1, targetPos.z + d.z);
               await this.navigatePrecise(fbPos, true);
@@ -1081,7 +1051,6 @@ class CactusFarm {
     }
   }
 
-  // ===== MODIFIED: placeBlock — kaktus icin sadece alttan referans =====
   async placeBlock(pos, blockType = null) {
     const refPos = pos.offset(0, -1, 0);
     const refBlock = this.bot.blockAt(refPos);
@@ -1093,7 +1062,6 @@ class CactusFarm {
         return;
       } catch (e) {}
     }
-    // Kaktus yanina blok yerlesemez (Minecraft kurali) — sadece alttan referans
     if (blockType === "cactus") {
       throw new Error("Referans blok bulunamadi (kaktus alttan yerlestirilmeli)");
     }
@@ -1111,7 +1079,6 @@ class CactusFarm {
     throw new Error("Referans blok bulunamadi");
   }
 
-  // ===== NEW: isBotStandingAt — bot hedef pozisyonda mi kontrol =====
   isBotStandingAt(pos) {
     const bp = this.bot.entity.position;
     return Math.abs(bp.x - (pos.x + 0.5)) < 0.8
@@ -1119,7 +1086,6 @@ class CactusFarm {
         && Math.abs(bp.y - pos.y) < 1.8;
   }
 
-  // ===== NEW: moveAwayFrom — dama desenindeki bos kareye cekil =====
   async moveAwayFrom(pos, floorIndex) {
     const floorY = this.getFloorBaseY(floorIndex);
     const dirs = [
@@ -1129,7 +1095,6 @@ class CactusFarm {
     for (const d of dirs) {
         const adjX = pos.x + d.x;
         const adjZ = pos.z + d.z;
-        // Dama deseninde bos kareye git
         if ((adjX + adjZ) % 2 !== 0) {
             const groundBlock = this.bot.blockAt(new Vec3(adjX, floorY, adjZ));
             if (groundBlock && groundBlock.name !== "air" && groundBlock.name !== "void_air") {
@@ -1138,12 +1103,10 @@ class CactusFarm {
             }
         }
     }
-    // Fallback: herhangi bir yone git
     const d = dirs[0];
     await this.navigatePrecise(new Vec3(pos.x + d.x, floorY + 1, pos.z + d.z), true);
   }
 
-  // ===== NEW: returnToFloorViaStair — merdivenle kata don =====
   async returnToFloorViaStair(floorIndex) {
     this.manager.log(`   Merdiven noktasindan Kat ${floorIndex + 1}'e giriliyor...`);
     await this.climbToFloor(floorIndex);

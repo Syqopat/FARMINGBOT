@@ -1,4 +1,4 @@
-const socket = io();
+﻿const socket = io();
 
 let bots = [];
 let selectedBotId = null;
@@ -7,11 +7,11 @@ let farms = {};
 let editingFarmName = null;
 
 socket.on("connect", () => {
-  addLog("Dashboard bağlandı.", "success");
+  addLog("Dashboard baÄŸlandÄ±.", "success");
 });
 
 socket.on("disconnect", () => {
-  addLog("Dashboard bağlantısı kesildi!", "error");
+  addLog("Dashboard baÄŸlantÄ±sÄ± kesildi!", "error");
 });
 
 socket.on("bots_list", (data) => {

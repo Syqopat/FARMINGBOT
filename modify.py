@@ -1,16 +1,13 @@
-import os
+﻿import os
 import re
 
 def remove_comments(content, ext):
     if ext in ['.js', '.css']:
-        # Remove /* ... */
         content = re.sub(r'/\*[\s\S]*?\*/', '', content)
-        # Remove // ...
         content = re.sub(r'(?<!:)\/\/.*', '', content)
     elif ext == '.html':
         content = re.sub(r'<!--[\s\S]*?-->', '', content)
     elif ext == '.py':
-        # Remove # ...
         content = re.sub(r'(?m)^\s*#.*$', '', content)
         content = re.sub(r'(?m)  #.*$', '', content)
     return content
@@ -20,7 +17,7 @@ def rename_terms(content):
     content = content.replace("Cactus Farm Bot", "Suki Farm Bot")
     content = content.replace("CactusFarm", "SukiFarmBot")
     content = content.replace("Cactus Farm", "Suki Farm Bot")
-    content = content.replace("Kaktüs Farm", "Suki Farm Bot")
+    content = content.replace("KaktÃ¼s Farm", "Suki Farm Bot")
     content = content.replace("cactusfarm-bot", "suki-farm-bot")
     content = content.replace("cactusfarm", "sukifarmbot")
     content = content.replace("cactus-farm", "suki-farm-bot")
@@ -37,7 +34,6 @@ def process_file(filepath):
     new_content = rename_terms(content)
     new_content = remove_comments(new_content, ext)
 
-    # Clean up multiple empty lines
     new_content = re.sub(r'\n\s*\n', '\n', new_content)
 
     with open(filepath, 'w', encoding='utf-8') as f:
